@@ -46,11 +46,32 @@ def analyze_urls(input_file, output_file=None, max_depth=None):
     # Print summary to console
     print(output_text)
 
-    # Save to file if output file is specified
+    # Save files if output file is specified
     if output_file:
+        # Save main summary
         with open(output_file, 'w', encoding='utf-8') as out_file:
             out_file.write(output_text)
+        
+        # Save subdomains
+        subdomain_file = output_file.replace('.txt', '_subdomains.txt') if output_file.endswith('.txt') else output_file + '_subdomains.txt'
+        with open(subdomain_file, 'w', encoding='utf-8') as sub_file:
+            sub_file.write("\n".join(sorted(domains)))
+        
+        # Save subdirectories
+        subdir_file = output_file.replace('.txt', '_subdirs.txt') if output_file.endswith('.txt') else output_file + '_subdirs.txt'
+        with open(subdir_file, 'w', encoding='utf-8') as subdir_file:
+            subdir_file.write("\n".join(sorted(subdirectories)))
+        
+        # Save parameters
+        params_file = output_file.replace('.txt', '_params.txt') if output_file.endswith('.txt') else output_file + '_params.txt'
+        with open(params_file, 'w', encoding='utf-8') as params_file:
+            params_output = [f"{param} ({count} occurrences)" for param, count in sorted(parameters.items(), key=lambda x: x[1], reverse=True)]
+            params_file.write("\n".join(params_output))
+        
         print(f"\n[+] Summary saved to {output_file}")
+        print(f"[+] Subdomains saved to {subdomain_file}")
+        print(f"[+] Subdirectories saved to {subdir_file}")
+        print(f"[+] Parameters saved to {params_file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Analyze URLs and extract domains, subdirectories, and parameters.")
